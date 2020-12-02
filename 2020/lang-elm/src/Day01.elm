@@ -86,7 +86,7 @@ findNumber ( lows, highs ) =
 
         a :: rest ->
             if List.member (2020 - a) highs then
-                Debug.log "a" a * (2020 - a)
+                a * (2020 - a)
 
             else
                 findNumber ( rest, highs )
