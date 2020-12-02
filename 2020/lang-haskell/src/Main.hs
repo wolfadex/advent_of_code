@@ -28,5 +28,5 @@ decodePart _ = Nothing
 
 getSolver :: String -> Maybe Part -> Maybe (String -> Int)
 getSolver "01" (Just One) = Just Day01.solve1
-getSolver "02" (Just Two) = Just Day01.solve2
+getSolver "01" (Just Two) = Just Day01.solve2
 getSolver _ _ = Nothing

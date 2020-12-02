@@ -27,4 +27,15 @@ findNumber (a:rest, highs) = if b `elem` highs then a * b else findNumber (rest,
     b = 2020 - a
 
 solve2 :: String -> Int
-solve2 input = -1
+solve2 = findNums3 . filterMap (readMaybe :: (String -> Maybe Int)) . splitOn "\n"
+
+findNums3 :: [Int] -> Int
+findNums3 [] = -1
+findNums3 (a:rest) =
+  case findNums2 (2020 - a) rest of
+    Just (b, c) -> a * b * c
+    Nothing -> findNums3 rest
+
+findNums2 :: Int -> [Int] -> Maybe (Int, Int)
+findNums2 _ [] = Nothing
+findNums2 goal (a:rest) = if goal - a `elem` rest then Just (a, goal - a) else findNums2 goal rest
