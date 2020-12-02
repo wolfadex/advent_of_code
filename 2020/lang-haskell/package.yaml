@@ -1,0 +1,50 @@
+name: lang-haskell
+version: 0.1.0.0
+github: "wolfadex/advent_of_code"
+license: MIT
+author: "Wolfgang Schuster"
+maintainer: "example@example.com"
+copyright: "2020 Wolfgang Schuster"
+
+extra-source-files:
+  - README.md
+  - ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description: Please see the README on GitHub at <https://wolfadex/githubuser/advent_of_code/2020/lang-haskell#readme>
+
+dependencies:
+  - base >= 4.7 && < 5
+  - text
+  - split
+
+library:
+  source-dirs: src
+
+executables:
+  lang-haskell-exe:
+    main: Main.hs
+    source-dirs: src
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - lang-haskell
+
+tests:
+  lang-haskell-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - lang-haskell
