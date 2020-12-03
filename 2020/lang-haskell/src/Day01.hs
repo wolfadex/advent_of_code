@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Day01 (solve1, solve2) where
 
 import Data.List.Split (splitOn)
