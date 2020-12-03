@@ -1,7 +1,7 @@
 import * as elmCompiler from "https://deno.land/x/deno_elm_compiler@0.1.0/compiler.ts";
 
-const [ inputFile, elmFile, elmName, partToSolve ] = Deno.args;
-const compiledElm = await elmCompiler.compileToString(elmFile);
+const [ inputFile, elmName, partToSolve ] = Deno.args;
+const compiledElm = await elmCompiler.compileToString(`./src/${elmName}.elm`);
 
 const globalEval = eval;
 globalEval(compiledElm);;
