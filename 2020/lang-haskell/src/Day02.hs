@@ -7,13 +7,14 @@ import Text.Parsec.Char (oneOf, digit, letter, string)
 import Text.Parsec.Combinator (many1, eof)
 import Control.Monad (void)
 import Control.Applicative ( many)
+import Data.Maybe (mapMaybe)
 
 solve1 :: String -> Int
 solve1 input =
   case parse parsePossiblePasswords "" input of
     Left err -> -1
     Right possiblePasswords ->
-      length $ filterMap validPassword1 possiblePasswords
+      length $ mapMaybe validPassword1 possiblePasswords
 
 validPassword1 :: PossiblePassword -> Maybe Password
 validPassword1 PossiblePassword { character, content, low, high } =
@@ -27,7 +28,7 @@ solve2 input =
   case parse parsePossiblePasswords "" input of
     Left err -> -1
     Right possiblePasswords ->
-      length $ filterMap validPassword2 possiblePasswords
+      length $ mapMaybe validPassword2 possiblePasswords
 
 validPassword2 :: PossiblePassword -> Maybe Password
 validPassword2 PossiblePassword { character, content, low, high } =
@@ -83,15 +84,6 @@ symbol :: String -> Parsec String () ()
 symbol = void . string
 
 ---- HELPERS ----
-
-filterMap :: (a -> Maybe b) -> [a] -> [b]
-filterMap fn =
-  foldr (\a acc ->
-          case fn a of
-            Nothing -> acc
-            Just b -> b:acc
-        )
-        []
 
 indicies :: Char -> String -> [Int]
 indicies ch =
