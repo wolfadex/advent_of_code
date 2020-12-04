@@ -1,6 +1,5 @@
 port module Day02 exposing (main)
 
-import Html exposing (text)
 import Parser exposing ((|.), (|=), Parser, Step(..))
 import Platform
 
@@ -154,22 +153,3 @@ parsePossiblePassword =
                 |. Parser.chompWhile Char.isAlpha
                 |> Parser.getChompedString
            )
-
-
-
--- |> Parser.andThen
---     (\{ low, high, character, text } ->
---         let
---             charCount =
---                 String.indices character text
---                     |> List.length
---         in
---         if charCount >= low && charCount <= high then
---             Parser.succeed (Password text)
---         else
---             Parser.problem <|
---                 if charCount < low then
---                     "Char count to low"
---                 else
---                     "Char count too high"
---     )
