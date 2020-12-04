@@ -57,7 +57,7 @@ update msg model =
                             (\{ low, high, character, text } ->
                                 let
                                     charCount =
-                                        String.indices character text
+                                        String.indices (String.fromChar character) text
                                             |> List.length
                                 in
                                 if charCount >= low && charCount <= high then
@@ -84,7 +84,7 @@ update msg model =
                             (\{ low, high, character, text } ->
                                 let
                                     charIndicies =
-                                        String.indices character text
+                                        String.indices (String.fromChar character) text
 
                                     hasLow =
                                         List.member (low - 1) charIndicies
@@ -115,7 +115,7 @@ type Password
 type alias PossiblePassword =
     { low : Int
     , high : Int
-    , character : String
+    , character : Char
     , text : String
     }
 
@@ -143,13 +143,26 @@ parsePossiblePassword =
         |. Parser.symbol "-"
         |= Parser.int
         |. Parser.spaces
-        |= (Parser.succeed ()
-                |. Parser.chompIf Char.isAlpha
-                |> Parser.getChompedString
-           )
+        |= parseChar
         |. Parser.symbol ":"
         |. Parser.spaces
         |= (Parser.succeed ()
                 |. Parser.chompWhile Char.isAlpha
                 |> Parser.getChompedString
            )
+
+
+parseChar : Parser Char
+parseChar =
+    Parser.succeed ()
+        |. Parser.chompIf Char.isAlpha
+        |> Parser.getChompedString
+        |> Parser.andThen
+            (\str ->
+                case String.toList str of
+                    [ c ] ->
+                        Parser.succeed c
+
+                    _ ->
+                        Parser.problem ("Expected a single char but got: " ++ str)
+            )
