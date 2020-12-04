@@ -24,6 +24,7 @@ dependencies:
   - text
   - split
   - parsec
+  - array
 
 library:
   source-dirs: src
