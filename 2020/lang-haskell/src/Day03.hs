@@ -39,10 +39,10 @@ buildConfig :: String -> Config
 buildConfig gridStr =
   Config w h g
   where
-    rows = splitOn "\n" gridStr
+    rows = lines gridStr
     w = length $ head rows
     h = length rows
-    g = Array.listArray (0, w * h) $ foldr (\c acc -> if c == '\n' then acc else c:acc) "" gridStr
+    g = Array.listArray (0, w * h) $ concat $ lines gridStr
 
 rideTheToboggan :: Point -> Point -> Int -> Config -> Int
 rideTheToboggan moveDir pos treesHit config@Config { width, height, grid } =
@@ -63,25 +63,3 @@ isTree grid width pos =
     y = Point.getY pos
     idx = y * width + x
     sym = grid ! idx
-
-
-
----- HELPERS ----
-
-filterMap :: (a -> Maybe b) -> [a] -> [b]
-filterMap fn =
-  foldr (\a acc ->
-          case fn a of
-            Nothing -> acc
-            Just b -> b:acc
-        )
-        []
-
-indicies :: Char -> String -> [Int]
-indicies ch =
-  snd . foldl (\(i, acc) c -> ( i + 1, if c == ch then i:acc else acc )) (0,[])
-
-xor :: Bool -> Bool -> Bool
-xor True False = True
-xor False True = True
-xor _ _ = False
