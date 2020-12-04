@@ -1,6 +1,5 @@
 module Day01 (solve1, solve2) where
 
-import Data.List.Split (splitOn)
 import Text.Read (readMaybe)
 import Data.Maybe (mapMaybe)
 

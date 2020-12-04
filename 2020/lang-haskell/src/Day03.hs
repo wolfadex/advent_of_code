@@ -4,7 +4,6 @@ module Day03 (solve1, solve2) where
 
 import Data.Array.IArray (Array, (!))
 import qualified Data.Array.IArray as Array
-import Data.List.Split (splitOn)
 import Point (Point)
 import qualified Point
 
