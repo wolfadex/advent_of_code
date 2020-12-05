@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2ca716fa2d67396df430e95fb3f4abddc2d8e3e9c0e5801935b96c27edff0076
+-- hash: 6833db5d5b8c4ec4957f08d66b4cad905cbe4565bdacf50dec0b4aec22d5a985
 
 name:           lang-haskell
 version:        0.1.0.0
@@ -30,6 +30,7 @@ library
       Day01
       Day02
       Day03
+      Day04
       Main
       Point
   other-modules:
@@ -39,7 +40,10 @@ library
   build-depends:
       array
     , base >=4.7 && <5
+    , containers
+    , megaparsec
     , parsec
+    , parser-combinators
     , split
     , text
   default-language: Haskell2010
@@ -50,6 +54,7 @@ executable lang-haskell-exe
       Day01
       Day02
       Day03
+      Day04
       Point
       Paths_lang_haskell
   hs-source-dirs:
@@ -58,8 +63,11 @@ executable lang-haskell-exe
   build-depends:
       array
     , base >=4.7 && <5
+    , containers
     , lang-haskell
+    , megaparsec
     , parsec
+    , parser-combinators
     , split
     , text
   default-language: Haskell2010
@@ -75,8 +83,11 @@ test-suite lang-haskell-test
   build-depends:
       array
     , base >=4.7 && <5
+    , containers
     , lang-haskell
+    , megaparsec
     , parsec
+    , parser-combinators
     , split
     , text
   default-language: Haskell2010

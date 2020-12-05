@@ -23,7 +23,10 @@ dependencies:
   - base >= 4.7 && < 5
   - text
   - split
+  - containers
   - parsec
+  - megaparsec
+  - parser-combinators
   - array
 
 library:
