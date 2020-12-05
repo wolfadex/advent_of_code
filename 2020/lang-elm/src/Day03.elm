@@ -1,7 +1,6 @@
 port module Day03 exposing (main)
 
 import Array exposing (Array)
-import Html exposing (input)
 import Platform
 import Point exposing (Point)
 
