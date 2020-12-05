@@ -4,7 +4,7 @@ import Text.Read (readMaybe)
 import Data.Maybe (mapMaybe)
 
 solve1 :: String -> Int
-solve1 = findNumber . partition (< 1010) . mapMaybe (readMaybe :: (String -> Maybe Int)) . splitOn "\n"
+solve1 = findNumber . partition (< 1010) . mapMaybe (readMaybe :: (String -> Maybe Int)) . lines
 
 findNumber :: ([Int], [Int]) -> Int
 findNumber ([], highs) = if 1010 `elem` highs then 1010 ^ 2 else -1
