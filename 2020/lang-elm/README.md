@@ -14,3 +14,4 @@ The Deno flags are for reading, writing, and compiling the Elm code.
 - [Day 2](./src/Day02.elm)
 - [Day 3](./src/Day03.elm)
 - [Day 4](./src/Day04.elm)
+- [Day 5](./src/Day05.elm)
