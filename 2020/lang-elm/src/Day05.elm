@@ -76,9 +76,6 @@ update msg model =
 findSeat : String -> Int
 findSeat instructions =
     let
-        rowInstructions =
-            String.left 7 instructions
-
         row =
             String.foldl
                 (\char acc ->
@@ -93,12 +90,9 @@ findSeat instructions =
                             acc
                 )
                 (List.range 0 127)
-                rowInstructions
+                (String.left 7 instructions)
                 |> List.head
                 |> Maybe.withDefault 0
-
-        columnInstructions =
-            String.right 3 instructions
 
         column =
             String.foldl
@@ -114,7 +108,7 @@ findSeat instructions =
                             acc
                 )
                 (List.range 0 7)
-                columnInstructions
+                (String.right 3 instructions)
                 |> List.head
                 |> Maybe.withDefault 0
     in
