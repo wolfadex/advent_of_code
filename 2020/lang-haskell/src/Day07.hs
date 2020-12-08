@@ -13,8 +13,8 @@ import Text.Megaparsec.Char (space, space1, char, string)
 import Text.Megaparsec.Char.Lexer (decimal, charLiteral)
 import Data.Set (Set)
 import qualified Data.Set as Set
-import Data.Map (Map)
-import qualified Data.Map as Map
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
 
 solve1 :: String -> Int
 solve1 input =
@@ -41,7 +41,18 @@ calculateParents childId bags =
     parents = parentBags bags childId
 
 solve2 :: String -> Int
-solve2 = undefined
+solve2 = calculateContains (ColorId "shiny gold") . parseInput
+
+calculateContains :: ColorId -> Map ColorId Bag -> Int
+calculateContains parentId bags =
+  let children = maybe [] bagChildren $ Map.lookup parentId bags
+  in
+  foldl
+    (\total ( count, id ) ->
+      total + count + count * calculateContains id bags
+    )
+    0
+    children
 
 ---- TYPES ----
 
