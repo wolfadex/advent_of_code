@@ -2,16 +2,15 @@
 
 module Day07 (solve1, solve2) where
 
-import Control.Applicative ((<*), (<|>), (<*>), (<$>), Alternative)
+import Control.Applicative ((<*), (<*>))
 import Control.Applicative.Combinators (someTill, choice)
 import Control.Monad (void)
 import Control.Monad.Combinators (many, between)
 import Data.Maybe (fromMaybe)
 import Data.Void (Void)
-import Text.Megaparsec (Parsec, parseMaybe, try, eof, parseError, ParseError(..), takeWhileP)
-import Text.Megaparsec.Char (space, space1, alphaNumChar, printChar, char, string)
-import Text.Megaparsec.Char.Lexer (symbol, decimal, charLiteral)
-import Text.Megaparsec.Error (ErrorFancy(..))
+import Text.Megaparsec (Parsec, parseMaybe, try, eof)
+import Text.Megaparsec.Char (space, space1, char, string)
+import Text.Megaparsec.Char.Lexer (decimal, charLiteral)
 import Data.Set (Set)
 import qualified Data.Set as Set
 import Data.Map (Map)
