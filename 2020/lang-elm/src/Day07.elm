@@ -89,13 +89,13 @@ calculateContains parentId bags =
 
 
 parentBags : Dict ColorId Bag -> ColorId -> Set ColorId
-parentBags bags chidlId =
+parentBags bags childId =
     Dict.foldl
         (\_ bag acc ->
             let
                 containsChild =
                     bag.contains
-                        |> List.filter (\( _, id ) -> id == chidlId)
+                        |> List.filter (\( _, id ) -> id == childId)
                         |> List.length
                         |> (\l -> l > 0)
             in
