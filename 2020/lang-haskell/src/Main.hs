@@ -7,6 +7,7 @@ import qualified Day04
 import qualified Day05
 import qualified Day06
 import qualified Day07
+import qualified Day08
 import qualified System.Environment
 
 main :: IO ()
@@ -45,4 +46,6 @@ getSolver "06" (Just One) = Just Day06.solve1
 getSolver "06" (Just Two) = Just Day06.solve2
 getSolver "07" (Just One) = Just Day07.solve1
 getSolver "07" (Just Two) = Just Day07.solve2
+getSolver "08" (Just One) = Just Day08.solve1
+getSolver "08" (Just Two) = Just Day08.solve2
 getSolver _ _ = Nothing

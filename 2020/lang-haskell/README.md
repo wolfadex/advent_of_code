@@ -15,3 +15,4 @@ where `NN` is the day you're wokring on, e.g. 01, and # is the part of the day, 
 - [Day 5](./src/Day05.hs)
 - [Day 6](./src/Day06.hs)
 - [Day 7](./src/Day07.hs)
+- [Day 8](./src/Day08.hs)
