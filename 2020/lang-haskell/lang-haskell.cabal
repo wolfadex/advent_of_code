@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7c1f74b4747bc0db13aa20eec2e416f82f6e6b591d47c7cb2bd4947cd182ff80
+-- hash: 37b3d658ab72f59abc80069a0860b23092fcd1eb4d1daad5f24e81c2a53adc45
 
 name:           lang-haskell
 version:        0.1.0.0
@@ -37,6 +37,7 @@ library
       Day08
       Day09
       Day10
+      Day11
       Main
       Point
   other-modules:
@@ -67,6 +68,7 @@ executable lang-haskell-exe
       Day08
       Day09
       Day10
+      Day11
       Point
       Paths_lang_haskell
   hs-source-dirs:
