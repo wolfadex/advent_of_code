@@ -7,10 +7,10 @@ import Data.Matrix as Matrix
 import Data.Maybe as Maybe
 
 solve1 :: String -> Int
-solve1 = occupiedCount . musicalChairs nearbySeats 4 . Matrix.mapPos parseToSpace . Matrix.fromLists . lines -- inputToMap
+solve1 = occupiedCount . musicalChairs nearbySeats 4 . Matrix.mapPos parseToSpace . Matrix.fromLists . lines
 
 solve2 :: String -> Int
-solve2 = occupiedCount . musicalChairs firstSeatInSight 5 . Matrix.mapPos parseToSpace . Matrix.fromLists . lines -- inputToMap
+solve2 = occupiedCount . musicalChairs firstSeatInSight 5 . Matrix.mapPos parseToSpace . Matrix.fromLists . lines
 
 data Space
   = Floor
@@ -63,7 +63,7 @@ updateSeats nearByFn minSisterSeats grid =
 
 nearbySeats :: NearByFn
 nearbySeats grid (x, y) =
-  Maybe.catMaybes [ Matrix.safeGet (x - 1) (y - 1) grid
+  Maybe.catMaybes[ Matrix.safeGet (x - 1) (y - 1) grid
     , Matrix.safeGet (x - 1) y grid
     , Matrix.safeGet (x - 1) (y + 1) grid
     , Matrix.safeGet x (y - 1) grid
