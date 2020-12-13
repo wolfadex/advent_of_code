@@ -28,6 +28,7 @@ dependencies:
   - megaparsec
   - parser-combinators
   - array
+  - matrix
 
 library:
   source-dirs: src

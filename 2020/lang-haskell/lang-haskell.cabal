@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 37b3d658ab72f59abc80069a0860b23092fcd1eb4d1daad5f24e81c2a53adc45
+-- hash: 53ba0771dda8ef795b46f893d211d2fc3dd1eb50aaa5a557da8b925a8733f391
 
 name:           lang-haskell
 version:        0.1.0.0
@@ -48,6 +48,7 @@ library
       array
     , base >=4.7 && <5
     , containers
+    , matrix
     , megaparsec
     , parsec
     , parser-combinators
@@ -79,6 +80,7 @@ executable lang-haskell-exe
     , base >=4.7 && <5
     , containers
     , lang-haskell
+    , matrix
     , megaparsec
     , parsec
     , parser-combinators
@@ -99,6 +101,7 @@ test-suite lang-haskell-test
     , base >=4.7 && <5
     , containers
     , lang-haskell
+    , matrix
     , megaparsec
     , parsec
     , parser-combinators

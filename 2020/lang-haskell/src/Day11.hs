@@ -2,82 +2,105 @@
 
 module Day11 (solve1, solve2) where
 
-import Data.Map (Map)
-import Data.Map.Strict as Map
+import Data.Matrix (Matrix)
+import Data.Matrix as Matrix
 import Data.Maybe as Maybe
-import Debug.Trace
 
 solve1 :: String -> Int
-solve1 = occupiedCount . musicalChairs . inputToMap
+solve1 = occupiedCount . musicalChairs nearbySeats 4 . Matrix.mapPos parseToSpace . Matrix.fromLists . lines -- inputToMap
 
 solve2 :: String -> Int
-solve2 = undefined
+solve2 = occupiedCount . musicalChairs firstSeatInSight 5 . Matrix.mapPos parseToSpace . Matrix.fromLists . lines -- inputToMap
 
-data Space =
-    Floor
+data Space
+  = Floor
   | SeatEmpty
   | SeatOccupied
-  deriving (Eq, Show)
+  deriving (Eq)
 
-inputToMap :: String -> Map (Int, Int) Space
-inputToMap = Map.map charToSpace . (\l -> Debug.Trace.traceShow l l) . outer . lines
-  where
-    charToSpace = \case
-                      '.' -> Floor
-                      'L' -> SeatEmpty
-                      '#' -> SeatOccupied
-                      _ -> Floor
-    outer = fst . Prelude.foldl (\(grid, row) rowStr-> (inner (grid, row) rowStr, row + 1)) (Map.empty, 0)
-    inner (grid, row) = fst . Prelude.foldl (\(g, col) c -> (Map.insert (row, col) c g, col + 1)) (grid, 0)
+instance Show Space where
+  show s = case s of
+    Floor -> "."
+    SeatEmpty -> "L"
+    SeatOccupied -> "#"
 
-musicalChairs :: Map (Int, Int) Space -> Map (Int, Int) Space
-musicalChairs previousSeating =
+type NearByFn = Matrix Space -> (Int, Int) -> [Space]
+
+parseToSpace :: (Int, Int) -> Char -> Space
+parseToSpace _ = \case
+  '.' -> Floor
+  'L' -> SeatEmpty
+  '#' -> SeatOccupied
+  _ -> Floor
+
+musicalChairs :: NearByFn -> Int -> Matrix Space -> Matrix Space
+musicalChairs nearByFn minSisterSeats previousSeating =
   if previousSeating == nextSeating
     then previousSeating
-    else musicalChairs nextSeating
+    else musicalChairs nearByFn minSisterSeats nextSeating
   where
-    nextSeating = applyFullSeats $ applyEmptySeats previousSeating
+    nextSeating = updateSeats nearByFn minSisterSeats previousSeating
 
-applyEmptySeats :: Map (Int, Int) Space -> Map (Int, Int) Space
-applyEmptySeats grid =
-  Map.mapWithKey
+updateSeats :: NearByFn -> Int -> Matrix Space -> Matrix Space
+updateSeats nearByFn minSisterSeats grid =
+ Matrix.mapPos
     (\(x, y) space ->
       case space of
         SeatEmpty ->
-          if SeatOccupied `elem` nearbySeats (x, y) grid
+          if SeatOccupied `elem` getNearbySeats (x, y)
             then space
             else SeatOccupied
-        _ -> space
-    )
-    grid
-
-applyFullSeats :: Map (Int, Int) Space -> Map (Int, Int) Space
-applyFullSeats grid =
-  Map.mapWithKey
-    (\(x, y) space ->
-      case space of
         SeatOccupied ->
-          if (4 ==) $ length $ justOccupiedSeats $ nearbySeats (x, y) grid
+          if (>= minSisterSeats) $ length $ justOccupiedSeats $ getNearbySeats (x, y)
             then SeatEmpty
             else space
-        _ -> space
+        Floor -> Floor
     )
     grid
   where
+    getNearbySeats = nearByFn grid
     justOccupiedSeats = Prelude.foldr (\space acc -> if space == SeatOccupied then space : acc else acc) []
 
-
-nearbySeats :: (Int, Int) -> Map (Int, Int) Space -> [Space]
-nearbySeats (x, y) grid =
-  Maybe.catMaybes [ Map.lookup (x - 1, y - 1) grid
-    , Map.lookup (x - 1, y) grid
-    , Map.lookup (x - 1, y + 1) grid
-    , Map.lookup (x, y - 1) grid
-    , Map.lookup (x, y + 1) grid
-    , Map.lookup (x + 1, y - 1) grid
-    , Map.lookup (x + 1, y) grid
-    , Map.lookup (x + 1, y + 1) grid
+nearbySeats :: NearByFn
+nearbySeats grid (x, y) =
+  Maybe.catMaybes [ Matrix.safeGet (x - 1) (y - 1) grid
+    , Matrix.safeGet (x - 1) y grid
+    , Matrix.safeGet (x - 1) (y + 1) grid
+    , Matrix.safeGet x (y - 1) grid
+    , Matrix.safeGet x (y + 1) grid
+    , Matrix.safeGet (x + 1) (y - 1) grid
+    , Matrix.safeGet (x + 1) y grid
+    , Matrix.safeGet (x + 1) (y + 1) grid
     ]
 
-occupiedCount :: Map (Int, Int) Space -> Int
-occupiedCount = Map.foldl (\total space -> if space == SeatOccupied then total + 1 else total) 0
+firstSeatInSight :: NearByFn
+firstSeatInSight grid (x, y) =
+  Maybe.catMaybes [ firstSeatOrNothing grid (x, y) (-1, -1)
+    , firstSeatOrNothing grid (x, y) (-1, 0)
+    , firstSeatOrNothing grid (x, y) (-1, 1)
+    , firstSeatOrNothing grid (x, y) (0, -1)
+    , firstSeatOrNothing grid (x, y) (0, 1)
+    , firstSeatOrNothing grid (x, y) (1, -1)
+    , firstSeatOrNothing grid (x, y) (1, 0)
+    , firstSeatOrNothing grid (x, y) (1, 1)
+    ]
+
+firstSeatOrNothing :: Matrix Space -> (Int, Int) -> (Int, Int) -> Maybe Space
+firstSeatOrNothing grid (x1, y1) dir@(x2, y2) =
+  case Matrix.safeGet nextX nextY grid of
+    Nothing -> Nothing
+    Just s ->
+      case s of
+        SeatOccupied -> Just s
+        SeatEmpty -> Just s
+        Floor -> firstSeatOrNothing grid (nextX, nextY) dir
+  where
+    nextX = x1 + x2
+    nextY = y1 + y2
+
+occupiedCount :: Matrix Space -> Int
+occupiedCount =
+  Prelude.foldl
+    (\total space -> if space == SeatOccupied then total + 1 else total)
+    0
+    . Matrix.toList
