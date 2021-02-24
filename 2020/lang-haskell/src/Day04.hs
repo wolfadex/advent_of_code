@@ -4,25 +4,23 @@
 module Day04 (solve1, solve2) where
 
 -- import Control.Monad (void)
-import Control.Applicative ((<*), (<|>), (<*>), (<$>), Alternative)
+import Control.Applicative ((<*), (<|>), (<$>), Alternative)
 import Control.Monad (void)
-import Control.Monad.Combinators (many, manyTill)
+import Control.Monad.Combinators (many, manyTill, count)
 import Data.List.Split (splitOn)
 import Data.Maybe (mapMaybe)
 import Data.Void (Void)
-import Text.Megaparsec (Parsec, parseMaybe, parse, try, eof, parseError, ParseError(..))
-import Text.Megaparsec.Char (space, space1, alphaNumChar, asciiChar, eol, newline, digitChar, lowerChar, char, string)
-import Text.Megaparsec.Char.Lexer (symbol, decimal)
+import Text.Megaparsec (Parsec, parseMaybe, try, eof, parseError, ParseError(..))
+import Text.Megaparsec.Char (space1, asciiChar, newline, digitChar, char, string)
+import Text.Megaparsec.Char.Lexer (decimal)
 import Text.Megaparsec.Error (ErrorFancy(..))
 import qualified Data.Set as Set
-import Debug.Trace (trace)
 
 solve1 :: String -> Int
 solve1 = length . mapMaybe (parsePassports parsePassportField) . splitOn "\n\n"
 
 solve2 :: String -> Int
--- solve2 = length . mapMaybe (parsePassports parsePassportFieldBetter) . splitOn "\n\n"
-solve2 = undefined
+solve2 = length . mapMaybe (parsePassports parsePassportFieldBetter) . splitOn "\n\n"
 
 ---- TYPES ----
 
@@ -49,23 +47,11 @@ data PassportField
     | PassportId String
     | CountryId String
 
--- instance Show PassportField where
---   show (BirthYear i) = "BY: " <> show i
---   show (IssueYear i) = "IY: " <> show i
---   show (ExpirationYear i) = "EY: " <> show i
---   show (Height h) = "H: " <> h
---   show (HairColor hc) = "HC: " <> hc
---   show (EyeColor ec) = "EC: " <> ec
---   show (PassportId pi) = "PI: " <> pi
---   show (CountryId ci) = "CI: " <> ci
-
 ---- PARSERS ----
 
 parsePassports :: Parser PassportField -> String -> Maybe Passport
-parsePassports fieldParser inp =
-    case parse (parsePassport fieldParser) "" inp of
-      Right p -> Just p
-      Left err -> Nothing
+parsePassports fieldParser =
+    parseMaybe (parsePassport fieldParser)
 
 
 parsePassport :: Parser PassportField -> Parser Passport
@@ -108,8 +94,7 @@ parsePassport fieldParser = do
       return $ Passport by iy ey h hc ec id countryId
 
     _ ->
-      parseError $ FancyError 0 Set.empty
-
+      badPlaceholderError
 
 -- PART 1
 
@@ -164,10 +149,162 @@ parseCountryId = CountryId <$> parseField "cid" (manyTill asciiChar sep)
 
 -- PART 2
 
----- HELPERS ----
+parsePassportFieldBetter :: Parser PassportField
+parsePassportFieldBetter =
+      try parseBirthYearBetter
+  <|> try parseIssueYearBetter
+  <|> try parseExpirationYearBetter
+  <|> try parseHeightBetter
+  <|> try parseHairColorBetter
+  <|> try parseEyeColorBetter
+  <|> try parsePassportIdBetter
+  <|> parseCountryId
 
-optional :: Alternative f => f a -> f (Maybe a)
-optional p = (Just <$> p) <|> pure Nothing
+parseBirthYearBetter :: Parser PassportField
+parseBirthYearBetter = do
+  year <- parseField "byr" decimal <* sep
+  if (year < 1920) || (year > 2002) then
+    badPlaceholderError
+  else
+    return $ BirthYear year
+
+parseIssueYearBetter :: Parser PassportField
+parseIssueYearBetter = do
+  year <- parseField "iyr" decimal <* sep
+  if (year < 2010) || (year > 2020) then
+    badPlaceholderError
+  else
+    return $ IssueYear year
+
+parseExpirationYearBetter :: Parser PassportField
+parseExpirationYearBetter = do
+  year <- parseField "eyr" decimal <* sep
+  if (year < 2020) || (year > 2030) then
+    badPlaceholderError
+  else
+    return $ ExpirationYear year
+
+parseHeightBetter :: Parser PassportField
+parseHeightBetter = do
+  val <- parseField "hgt" decimal
+  hgt <- parseHeightUnit
+  void sep
+  case hgt of
+    Centimeter ->
+      if (val < 150) || (val > 193) then
+        badPlaceholderError
+      else
+        return $ Height (show val)
+    
+    Inch ->
+      if (val < 59) || (val > 76) then
+        badPlaceholderError
+      else
+        return $ Height (show val)
+
+
+parseHeightUnit :: Parser HeightVal
+parseHeightUnit = parseCentimeter <|> parseInch
+
+
+parseCentimeter :: Parser HeightVal
+parseCentimeter = do
+  void $ string "cm"
+  return Centimeter
+
+
+parseInch :: Parser HeightVal
+parseInch = do
+  void $ string "in"
+  return Inch
+
+data HeightVal
+  = Centimeter
+  | Inch
+
+parseHairColorBetter :: Parser PassportField
+parseHairColorBetter = do
+  color <- parseField "hcl" parseHexColor
+  void sep
+  return $ HairColor (show color)
+
+newtype HexColor = HexColor ( Hex, Hex, Hex, Hex, Hex, Hex ) deriving (Show)
+
+data Hex
+  = HexZero
+  | HexOne
+  | HexTwo
+  | HexThree
+  | HexFour
+  | HexFive
+  | HexSix
+  | HexSeven
+  | HexEight
+  | HexNine
+  | HexA
+  | HexB
+  | HexC
+  | HexD
+  | HexE
+  | HexF
+  deriving (Show)
+
+parseHexColor :: Parser HexColor
+parseHexColor = do
+  void $ char '#'
+  hexes <- count 6 parseHex
+  case hexes of
+    [r1, r2, g1, g2, b1, b2] ->
+      return $ HexColor (r1, r2, g1, g2, b1, b2)
+    _ ->
+      badPlaceholderError
+
+parseHex :: Parser Hex
+parseHex =
+      HexZero <$ char '0'
+  <|> HexOne <$ char '1'
+  <|> HexTwo <$ char '2'
+  <|> HexThree <$ char '3'
+  <|> HexFour <$ char '4'
+  <|> HexFive <$ char '5'
+  <|> HexSix <$ char '6'
+  <|> HexSeven <$ char '7'
+  <|> HexEight <$ char '8'
+  <|> HexNine <$ char '9'
+  <|> HexA <$ char 'a'
+  <|> HexB <$ char 'b'
+  <|> HexC <$ char 'c'
+  <|> HexD <$ char 'd'
+  <|> HexE <$ char 'e'
+  <|> HexF <$ char 'f'
+
+parseEyeColorBetter :: Parser PassportField
+parseEyeColorBetter = do
+  color <- parseField "ecl" parseEyeColorVal
+  void sep
+  return $ EyeColor color
+
+parseEyeColorVal :: Parser String
+parseEyeColorVal =
+      try (string "amb")
+  <|> try (string "blu")
+  <|> try (string "brn")
+  <|> try (string "gry")
+  <|> try (string "grn")
+  <|> try (string "hzl")
+  <|> string "oth"
+
+parsePassportIdBetter :: Parser PassportField
+parsePassportIdBetter = do
+  val <- parseField "pid" (many digitChar)
+  void sep
+  if length val == 9 then
+    return $ PassportId val
+  else
+    badPlaceholderError
+
+
+---- HELPERS ----
 
 get :: (a -> Maybe b) -> [a] -> Maybe b
 get pred [] = Nothing
@@ -175,3 +312,5 @@ get pred (a:rest) =
   case pred a of
     Just b -> Just b
     Nothing -> get pred rest
+
+badPlaceholderError = parseError $ FancyError 0 Set.empty
