@@ -1,0 +1,2 @@
+pid:155cm hcl:#b6652a cid:288 byr:2028 iyr:2028 hgt:150cm
+ecl:#996e72 eyr:1960

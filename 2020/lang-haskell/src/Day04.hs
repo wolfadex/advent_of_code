@@ -3,18 +3,15 @@
 
 module Day04 (solve1, solve2) where
 
--- import Text.Parsec (parse, Parsec, (<|>))
--- import Text.Parsec.Char (oneOf, digit, letter, string)
--- import Text.Parsec.Combinator (many1, eof)
 -- import Control.Monad (void)
 import Control.Applicative ((<*), (<|>), (<*>), (<$>), Alternative)
 import Control.Monad (void)
-import Control.Monad.Combinators (many)
+import Control.Monad.Combinators (many, manyTill)
 import Data.List.Split (splitOn)
 import Data.Maybe (mapMaybe)
 import Data.Void (Void)
-import Text.Megaparsec (Parsec, parseMaybe, try, eof, parseError, ParseError(..))
-import Text.Megaparsec.Char (space, space1, alphaNumChar, printChar, char, string)
+import Text.Megaparsec (Parsec, parseMaybe, parse, try, eof, parseError, ParseError(..))
+import Text.Megaparsec.Char (space, space1, alphaNumChar, asciiChar, eol, newline, digitChar, lowerChar, char, string)
 import Text.Megaparsec.Char.Lexer (symbol, decimal)
 import Text.Megaparsec.Error (ErrorFancy(..))
 import qualified Data.Set as Set
@@ -42,7 +39,6 @@ data Passport = Passport
     , passCountryId :: Maybe String
     }
 
-
 data PassportField
     = BirthYear Int
     | IssueYear Int
@@ -53,20 +49,32 @@ data PassportField
     | PassportId String
     | CountryId String
 
+-- instance Show PassportField where
+--   show (BirthYear i) = "BY: " <> show i
+--   show (IssueYear i) = "IY: " <> show i
+--   show (ExpirationYear i) = "EY: " <> show i
+--   show (Height h) = "H: " <> h
+--   show (HairColor hc) = "HC: " <> hc
+--   show (EyeColor ec) = "EC: " <> ec
+--   show (PassportId pi) = "PI: " <> pi
+--   show (CountryId ci) = "CI: " <> ci
+
 ---- PARSERS ----
 
 parsePassports :: Parser PassportField -> String -> Maybe Passport
-parsePassports fieldParser =
-    parseMaybe (parsePassport fieldParser)
+parsePassports fieldParser inp =
+    case parse (parsePassport fieldParser) "" inp of
+      Right p -> Just p
+      Left err -> Nothing
 
 
 parsePassport :: Parser PassportField -> Parser Passport
 parsePassport fieldParser = do
-  fields <- many (fieldParser <* space1)
+  fields <- many fieldParser
   let birthYear = get (\case
                         BirthYear y -> Just y
                         _ -> Nothing
-                    ) (trace "carl" fields)
+                    ) fields
   let issueYear = get (\case
                         IssueYear y -> Just y
                         _ -> Nothing
@@ -106,7 +114,8 @@ parsePassport fieldParser = do
 -- PART 1
 
 parsePassportField :: Parser PassportField
-parsePassportField = try parseBirthYear
+parsePassportField =
+      try parseBirthYear
   <|> try parseIssueYear
   <|> try parseExpirationYear
   <|> try parseHeight
@@ -115,39 +124,43 @@ parsePassportField = try parseBirthYear
   <|> try parsePassportId
   <|> parseCountryId
 
-
 parseField :: String -> Parser a -> Parser a
 parseField key valueParser = do
   void $ string key
   void $ char ':'
-  val <- valueParser
-  void (space <|> eof)
-  return val
+  valueParser
 
+sep :: Parser ()
+sep = space1 <|> myNewline <|> eof
+
+myNewline :: Parser ()
+myNewline = do
+  void $ char '\n'
+  
 
 parseBirthYear :: Parser PassportField
-parseBirthYear = BirthYear <$> parseField "byr" decimal
+parseBirthYear = BirthYear <$> parseField "byr" decimal <* sep
 
 parseIssueYear :: Parser PassportField
-parseIssueYear = IssueYear <$> parseField "iyr" decimal
+parseIssueYear = IssueYear <$> parseField "iyr" decimal <* sep
 
 parseExpirationYear :: Parser PassportField
-parseExpirationYear = ExpirationYear <$> parseField "eyr" decimal
+parseExpirationYear = ExpirationYear <$> parseField "eyr" decimal <* sep
 
 parseHeight :: Parser PassportField
-parseHeight = Height <$> parseField "hgt" (many alphaNumChar)
+parseHeight = Height <$> parseField "hgt" (manyTill asciiChar sep)
 
 parseHairColor :: Parser PassportField
-parseHairColor = HairColor <$> parseField "hcl" (many printChar)
+parseHairColor = HairColor <$> parseField "hcl" (manyTill asciiChar sep)
 
 parseEyeColor :: Parser PassportField
-parseEyeColor = EyeColor <$> parseField "ecl" (many printChar)
+parseEyeColor = EyeColor <$> parseField "ecl" (manyTill asciiChar sep)
 
 parsePassportId :: Parser PassportField
-parsePassportId = PassportId <$> parseField "pid" (many printChar)
+parsePassportId = PassportId <$> parseField "pid" (manyTill asciiChar sep)
 
 parseCountryId :: Parser PassportField
-parseCountryId = CountryId <$> parseField "cid" (many printChar)
+parseCountryId = CountryId <$> parseField "cid" (manyTill asciiChar sep)
 
 -- PART 2
 
