@@ -3,7 +3,6 @@
 
 module Day04 (solve1, solve2) where
 
--- import Control.Monad (void)
 import Control.Applicative ((<*), (<|>), (<$>), Alternative)
 import Control.Monad (void)
 import Control.Monad.Combinators (many, manyTill, count)
