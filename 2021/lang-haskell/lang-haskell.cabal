@@ -38,6 +38,7 @@ executable day1
   main-is: Day01.hs
   other-modules:
       Day02
+      Day03
       Paths_lang_haskell
   hs-source-dirs:
       app
@@ -51,10 +52,25 @@ executable day2
   main-is: Day02.hs
   other-modules:
       Day01
+      Day03
       Paths_lang_haskell
   hs-source-dirs:
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -main-is Day02
+  build-depends:
+      base >=4.7 && <5
+    , lang-haskell
+  default-language: Haskell2010
+
+executable day3
+  main-is: Day03.hs
+  other-modules:
+      Day01
+      Day02
+      Paths_lang_haskell
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -main-is Day03
   build-depends:
       base >=4.7 && <5
     , lang-haskell
