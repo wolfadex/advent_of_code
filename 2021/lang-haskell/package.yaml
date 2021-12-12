@@ -33,6 +33,17 @@ executables:
       - -threaded
       - -rtsopts
       - -with-rtsopts=-N
+      - -main-is Day01
+    dependencies:
+      - lang-haskell
+  day2:
+    main: Day02.hs
+    source-dirs: app
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -main-is Day02
     dependencies:
       - lang-haskell
 

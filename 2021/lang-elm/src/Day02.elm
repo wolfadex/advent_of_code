@@ -29,7 +29,7 @@ program =
         }
 
 
-navigate2 : List Command -> (Int, Int, Int) -> Int
+navigate2 : List Command -> ( Int, Int, Int ) -> Int
 navigate2 commands ( depth, x, aim ) =
     case commands of
         [] ->

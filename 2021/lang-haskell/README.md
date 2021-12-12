@@ -9,3 +9,4 @@ stack run dayN input.txt
 where `N` is the day you're wokring on, e.g. `day1`, and `input.txt` is the input file for that day.
 
 - [Day 1](./src/Day01.hs)
+- [Day 2](./src/Day02.hs)
