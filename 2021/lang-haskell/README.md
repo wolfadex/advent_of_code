@@ -6,7 +6,7 @@ To run the code you'll need [Stack](https://docs.haskellstack.org/en/stable/READ
 stack run dayN input.txt
 ```
 
-where `N` is the day you're wokring on, e.g. `day1`, and `input.txt` is the input file for that day.
+where `N` is the day you're working on, e.g. `day1`, and `input.txt` is the input file for that day.
 
 - [Day 1](./app/Day01.hs)
 - [Day 2](./app/Day02.hs)

@@ -6,7 +6,7 @@ To run the code you'll need [Deno](https://deno.land/). Once installed you can r
 deno run --allow-read --allow-write --allow-env --allow-run ./src/driver.ts ../inputs/dayNN.txt DayNN #
 ```
 
-where `NN` is the day you're wokring on, e.g. `day01.txt` or `Day01` and `#` is the part of the day, e.g. `1` or `2`.
+where `NN` is the day you're working on, e.g. `day01.txt` or `Day01` and `#` is the part of the day, e.g. `1` or `2`.
 
 The Deno flags are for reading, writing, and compiling the Elm code.
 
