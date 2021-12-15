@@ -1,2 +1,13 @@
+# Elm
 elm-stuff
 node_modules
+
+# Haskell
+.stack-work/
+*~
+
+# F#
+.fake
+.ionide
+**/lang-fsharp/**/bin
+**/lang-fsharp/**/obj
