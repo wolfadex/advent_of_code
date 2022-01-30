@@ -1,13 +1,19 @@
+# C
+*/lang-c/*
+!*/lang-c/*.c
+!*/lang-c/*.h
+!*/lang-c/README.md
+
 # Elm
 elm-stuff
 node_modules
-
-# Haskell
-.stack-work/
-*~
 
 # F#
 .fake
 .ionide
 **/lang-fsharp/**/bin
 **/lang-fsharp/**/obj
+
+# Haskell
+.stack-work/
+*~
