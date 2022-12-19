@@ -1,0 +1,13 @@
+{
+  "name": "lang-elm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "elm-cli run"
+  },
+  "author": "Wolfgang Schuster",
+  "devDependencies": {
+    "@albertdahlin/elm-posix": "^1.1.0"
+  }
+}
