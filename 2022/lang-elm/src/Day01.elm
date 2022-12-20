@@ -11,7 +11,7 @@ program =
             \input ->
                 input
                     |> String.split "\n\n"
-                    |> List.map (String.split "\n" >> List.map (String.toInt >> Maybe.withDefault 0) >> List.sum)
+                    |> List.map (String.lines >> List.map (String.toInt >> Maybe.withDefault 0) >> List.sum)
                     |> List.maximum
                     |> Maybe.withDefault 0
                     |> String.fromInt
@@ -19,7 +19,7 @@ program =
             \input ->
                 input
                     |> String.split "\n\n"
-                    |> List.map (String.split "\n" >> List.map (String.toInt >> Maybe.withDefault 0) >> List.sum)
+                    |> List.map (String.lines >> List.map (String.toInt >> Maybe.withDefault 0) >> List.sum)
                     |> List.sort
                     |> List.reverse
                     |> List.take 3
