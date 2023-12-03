@@ -1,0 +1,16 @@
+{
+  "name": "lang-elm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "elm-pages run"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "elm": "^0.19.1-6",
+    "elm-format": "^0.8.7",
+    "elm-pages": "^3.0.9"
+  }
+}
