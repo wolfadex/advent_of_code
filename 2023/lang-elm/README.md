@@ -10,3 +10,4 @@ where `NN` is the day you're working on, e.g. `Day01.elm`, and `input.txt` is th
 
 - [Day 1](./src/Day01.elm)
 - [Day 2](./src/Day02.elm)
+- [Day 4](./src/Day04.elm)

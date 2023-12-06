@@ -2,7 +2,6 @@ module Day02 exposing (run)
 
 import Cli
 import Pages.Script exposing (Script)
-import Random
 
 
 run : Script
