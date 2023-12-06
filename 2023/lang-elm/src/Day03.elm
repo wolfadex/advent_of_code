@@ -118,7 +118,7 @@ gatherDigits currentPos grid acc =
                 case (Grid.neighbors currentPos grid).right of
                     Nothing ->
                         ( currentPos
-                        , acc
+                        , (char :: acc)
                             |> List.reverse
                             |> String.fromList
                         )
