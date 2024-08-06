@@ -13,8 +13,6 @@ main :: proc() {
 		context.logger = logger
 	}
 
-	// context.allocator = mem.arena_allocator()
-
 	if len(os.args) == 1 {
 		os.exit(1)
 	}
@@ -22,8 +20,10 @@ main :: proc() {
 	filePath := os.args[1]
 
 	if data, success := os.read_entire_file_from_filename(filePath); success {
-		inputData, _ := strings.clone_from_bytes(data)
-		lines, err := strings.split_lines(inputData)
+		input_data, _ := strings.clone_from_bytes(data)
+		defer delete(input_data)
+		lines, err := strings.split_lines(input_data)
+		defer delete(lines)
 
 		answer1: int = -1
 		answer2: int = -1
