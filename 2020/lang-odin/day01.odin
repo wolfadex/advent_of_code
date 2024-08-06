@@ -9,8 +9,30 @@ import "core:strings"
 
 main :: proc() {
 	when ODIN_DEBUG {
+		// setup debug logging
 		logger := log.create_console_logger()
 		context.logger = logger
+
+		// setup tracking allocator for making sure all memory is cleaned up
+		default_allocator := context.allocator
+		tracking_allocator: mem.Tracking_Allocator
+		mem.tracking_allocator_init(&tracking_allocator, default_allocator)
+		context.allocator = mem.tracking_allocator(&tracking_allocator)
+
+		reset_tracking_allocator :: proc(a: ^mem.Tracking_Allocator) -> bool {
+			err := false
+
+			for _, value in a.allocation_map {
+				fmt.printfln("%v: Leaked %v bytes", value.location, value.size)
+				err = true
+			}
+
+			mem.tracking_allocator_clear(a)
+
+			return err
+		}
+
+		defer reset_tracking_allocator(&tracking_allocator)
 	}
 
 	if len(os.args) == 1 {
@@ -19,8 +41,9 @@ main :: proc() {
 
 	filePath := os.args[1]
 
-	if data, success := os.read_entire_file_from_filename(filePath); success {
-		input_data, _ := strings.clone_from_bytes(data)
+	if bytes, success := os.read_entire_file_from_filename(filePath); success {
+		defer delete(bytes)
+		input_data, _ := strings.clone_from_bytes(bytes)
 		defer delete(input_data)
 		lines, err := strings.split_lines(input_data)
 		defer delete(lines)
@@ -29,6 +52,7 @@ main :: proc() {
 		answer2: int = -1
 
 		processedInts: [dynamic]int = {}
+		defer delete(processedInts)
 
 		lineProcessor: for line in lines {
 			i, _ := strconv.parse_int(line, 10)
