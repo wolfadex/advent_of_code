@@ -18,3 +18,11 @@ node_modules
 # Haskell
 .stack-work/
 *~
+
+# Odin
+day*.bin.dSYM
+day*.bin
+
+
+# Mac
+.DS_Store
