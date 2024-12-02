@@ -87,15 +87,13 @@ main :: proc() {
 			answer1 += abs(column1[i] - column2[i])
 
 			count, found := counts[column1[i]]
-			log.debug("count", count, found)
 
 			if found {
 				answer2 += count
 			} else {
 				c := slice.count(column2[:], column1[i])
-				log.debug("new count", c)
-				counts[column1[i]] = c
-				answer2 += c
+				counts[column1[i]] = column1[i] * c
+				answer2 += column1[i] * c
 			}
 		}
 
