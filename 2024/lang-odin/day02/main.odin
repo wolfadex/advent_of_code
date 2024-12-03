@@ -56,9 +56,8 @@ main :: proc() {
 
 			if is_safe(numStrs[:], false) {
 				answer1 += 1
-			}
-
-			if is_safe(numStrs[:], true) {
+				answer2 += 1
+			} else if is_safe(numStrs[:], true) {
 				answer2 += 1
 			}
 		}
@@ -131,10 +130,6 @@ is_safe :: proc(numStrs: []string, allow_faults: bool) -> bool {
 
 
 	if allow_faults {
-		if safe_check(numStrs) {
-			return true
-		}
-
 		for _, i in numStrs {
 			if safe_check(numStrs, true, i) {
 				return true
