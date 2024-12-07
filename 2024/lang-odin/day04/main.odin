@@ -102,9 +102,8 @@ main :: proc() {
 			}
 		}
 
-
 		if was_allocation {
-			defer delete(one_d)
+			delete(one_d)
 		}
 
 		fmt.printfln("Answer 1: %d", answer1)
@@ -121,12 +120,10 @@ in_bounds :: proc(index_to_search: int, grid: string, width: int) -> bool {
 }
 
 grid_to_index :: proc(point: [2]int, width: int) -> int {
-
 	return (point.y * width) + point.x
 }
 
 index_to_grid :: proc(index, width: int) -> (point: [2]int) {
-
 	point.x = index %% width
 	point.y = index / width
 
