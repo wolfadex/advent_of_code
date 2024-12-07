@@ -9,7 +9,6 @@ import "core:strconv"
 import "core:strings"
 import "core:text/regex"
 import regex_common "core:text/regex/common"
-import regex_parser "core:text/regex/parser"
 import "core:unicode"
 import "core:unicode/utf8"
 
