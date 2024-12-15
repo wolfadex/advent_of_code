@@ -1,4 +1,4 @@
-package day09
+package day10
 
 import "core:container/queue"
 import "core:fmt"
