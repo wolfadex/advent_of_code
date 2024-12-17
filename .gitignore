@@ -22,6 +22,8 @@ node_modules
 # Odin
 day*.bin.dSYM
 day*.bin
+day*.exe
+day*.pdb
 
 
 # Mac

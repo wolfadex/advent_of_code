@@ -38,11 +38,17 @@ main :: proc() {
 		defer reset_tracking_allocator(&tracking_allocator)
 	}
 
-	if len(os.args) == 1 {
+	if len(os.args) < 2 {
+		os.exit(1)
+	}
+
+	if len(os.args) < 3 {
+		fmt.println("After the input file, please enter a number of blinks to make")
 		os.exit(1)
 	}
 
 	filePath := os.args[1]
+	times_to_blink := min(100, strconv.atoi(os.args[2]))
 
 	if bytes, success := os.read_entire_file_from_filename(filePath); success {
 		defer delete(bytes)
@@ -57,17 +63,22 @@ main :: proc() {
 		defer delete(stns)
 		append(&stones, ..stns)
 
-		log.debug("Initial stones", stones)
+		steps : map[int]int
+		defer delete(steps)
+		steps[1]0
+		steps[2024]1
 
-		for blinks := 0; blinks < MAX_BLINKS; blinks += 1 {
-			log.debug("Blinks", blinks, stones)
+		// log.debug("Initial stones", stones)
+
+		for blinks := 0; blinks < times_to_blink; blinks += 1 {
+			// log.debug("Blinks", blinks, stones)
 			for idx := 0; idx < len(stones); idx += 1 {
 				stone := stones[idx]
-				log.debug("Next stone", stone)
+				// log.debug("Next stone", stone)
 
 				if stone == "0" {
 					stones[idx] = "1"
-					log.debug("0 -> 1", stones)
+					// log.debug("0 -> 1", stones)
 				} else {
 					size := len(stone)
 
@@ -80,38 +91,46 @@ main :: proc() {
 						buf_left: [20]byte
 						left := strconv.itoa(buf_left[:], left_val)
 						defer delete(left)
-						stones[idx] = strings.clone(left)
+						stones[idx] = strings.clone(left, context.temp_allocator)
 
 						buf_right: [20]byte
 						right := strconv.itoa(buf_right[:], right_val)
 						defer delete(right)
 						idx += 1
-						inject_at(&stones, idx, strings.clone(right))
-						log.debug("Split right after", stones)
+						inject_at(&stones, idx, strings.clone(right, context.temp_allocator))
+						// delete(stone)
+						// log.debug("Split right after", stones)
 					} else {
 						stone_val := strconv.atoi(stone)
 						stone_val *= 2024
 						buf: [20]byte
 						multi := strconv.itoa(buf[:], stone_val)
 						defer delete(multi)
-						stones[idx] = strings.clone(multi)
-						log.debug("Multiplied", stones)
+						stones[idx] = strings.clone(multi, context.temp_allocator)
+						// delete(stone)
+						// log.debug("Multiplied", stones)
 					}
 				}
 			}
 
-			log.debug("Blinked", stones)
+			// log.debug("Blinked", stones)
+			log.debug("Blinks completed", blinks, len(stones))
 		}
+
+		answer1 = len(stones)
 
 		for stone in stones {
 			delete(stone)
 		}
-
-		answer1 = len(stones)
 
 		fmt.printfln("Answer 1: %d", answer1)
 		fmt.printfln("Answer 2: %d", answer2)
 	}
 }
 
-MAX_BLINKS :: 2
+Stone :: union {int,MagicStone}
+
+MagicStone :: struct {
+	root: int
+	steps: int
+}
