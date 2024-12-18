@@ -18,3 +18,4 @@ where `NN` is the day you're working on, e.g. `day01/`, and `../inputs/day01.txt
 - [Day 8](./day08/main.odin)
 - [Day 9](./day09/main.odin)
 - [Day 10](./day10/main.odin)
+- [Day 11](./day11/main.odin)

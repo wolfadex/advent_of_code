@@ -1,13 +1,12 @@
 package day11
 
+
 import "core:fmt"
 import "core:log"
 import "core:mem"
 import "core:os"
-import "core:slice"
 import "core:strconv"
 import "core:strings"
-import "core:unicode/utf8"
 
 
 main :: proc() {
@@ -55,82 +54,114 @@ main :: proc() {
 		input_data := string(bytes)
 
 		answer1: int
-		answer2: int
 
-		stones: [dynamic]string
+		stones: map[int]int
 		defer delete(stones)
-		stns := strings.split(input_data, " ")
-		defer delete(stns)
-		append(&stones, ..stns)
 
-		steps : map[int]int
-		defer delete(steps)
-		steps[1]0
-		steps[2024]1
+		for stone in strings.split_iterator(&input_data, " ") {
+			id := strconv.atoi(stone)
+			stones[id] += 1
+		}
 
-		// log.debug("Initial stones", stones)
+		for blinks_rem := 0; blinks_rem < times_to_blink; blinks_rem += 1 {
+			intermediate_counts: map[int]int
 
-		for blinks := 0; blinks < times_to_blink; blinks += 1 {
-			// log.debug("Blinks", blinks, stones)
-			for idx := 0; idx < len(stones); idx += 1 {
-				stone := stones[idx]
-				// log.debug("Next stone", stone)
-
-				if stone == "0" {
-					stones[idx] = "1"
-					// log.debug("0 -> 1", stones)
+			for stone, qty in stones {
+				if stone == 0 {
+					intermediate_counts[1] += qty
 				} else {
-					size := len(stone)
-
+					size := num_digits(stone)
 					if size % 2 == 0 {
-						left_half := stone[:size / 2]
-						left_val := strconv.atoi(left_half)
-						right_half := stone[size / 2:]
-						right_val := strconv.atoi(right_half)
+						digits := fmt.tprintf("%d", stone)
 
-						buf_left: [20]byte
-						left := strconv.itoa(buf_left[:], left_val)
-						defer delete(left)
-						stones[idx] = strings.clone(left, context.temp_allocator)
+						left_half := digits[:size / 2]
+						right_half := digits[size / 2:]
 
-						buf_right: [20]byte
-						right := strconv.itoa(buf_right[:], right_val)
-						defer delete(right)
-						idx += 1
-						inject_at(&stones, idx, strings.clone(right, context.temp_allocator))
-						// delete(stone)
-						// log.debug("Split right after", stones)
+						left := strconv.atoi(left_half)
+						right := strconv.atoi(right_half)
+
+						intermediate_counts[left] += qty
+						intermediate_counts[right] += qty
 					} else {
-						stone_val := strconv.atoi(stone)
-						stone_val *= 2024
-						buf: [20]byte
-						multi := strconv.itoa(buf[:], stone_val)
-						defer delete(multi)
-						stones[idx] = strings.clone(multi, context.temp_allocator)
-						// delete(stone)
-						// log.debug("Multiplied", stones)
+						intermediate_counts[stone * 2024] += qty
 					}
 				}
 			}
-
-			// log.debug("Blinked", stones)
-			log.debug("Blinks completed", blinks, len(stones))
+			delete(stones)
+			stones = intermediate_counts
 		}
 
-		answer1 = len(stones)
-
-		for stone in stones {
-			delete(stone)
+		for _, qty in stones {
+			answer1 += qty
 		}
 
-		fmt.printfln("Answer 1: %d", answer1)
-		fmt.printfln("Answer 2: %d", answer2)
+		fmt.printfln("Answer: %d", answer1)
 	}
 }
 
-Stone :: union {int,MagicStone}
+num_digits :: proc(n: int) -> (count: int) {
+	num := n
+	for num != 0 {
+		// Remove rightmost digit
+		num = num / 10
 
-MagicStone :: struct {
-	root: int
-	steps: int
+		// Increment digit count by 1
+		count += 1
+	}
+
+	return
 }
+
+
+// dive_blink :: proc(stone: string, blinks_rem: int, cache: ^map[string]int) -> (width: int) {
+// 	if blinks_rem < 1 {
+// 		return 1
+// 	}
+
+
+// 	key := fmt.aprintf("%s_%d", stone, (blinks_rem - 1))
+// 	defer delete(key)
+// 	depth_width := cache[key]
+
+// 	if depth_width > 0 {
+// 		return depth_width
+// 	}
+
+// 	if stone == "0" {
+// 		width = dive_blink("1", blinks_rem - 1, cache)
+// 	} else {
+// 		size := len(stone)
+// 		if size % 2 == 0 {
+// 			left_half := stone[:size / 2]
+// 			right_half := stone[size / 2:]
+
+// 			left_val := strconv.atoi(left_half)
+// 			right_val := strconv.atoi(right_half)
+
+// 			buf_left: [20]byte
+// 			left := strconv.itoa(buf_left[:], left_val)
+// 			defer delete(left)
+
+// 			buf_right: [20]byte
+// 			right := strconv.itoa(buf_right[:], right_val)
+// 			defer delete(right)
+
+// 			left_count := dive_blink(left, blinks_rem - 1, cache)
+// 			right_count := dive_blink(right, blinks_rem - 1, cache)
+
+// 			width = left_count + right_count
+// 		} else {
+// 			stone_val := strconv.atoi(stone)
+// 			stone_val *= 2024
+// 			buf: [20]byte
+// 			multi := strconv.itoa(buf[:], stone_val)
+// 			defer delete(multi)
+
+// 			width = dive_blink(multi, blinks_rem - 1, cache)
+// 		}
+// 	}
+
+// 	cache[key] = width
+
+// 	return
+// }
